@@ -9,7 +9,8 @@ const EmployersList = ({data,onDelete}) => {
         return(
             <EmployersListItem 
                 key={id} {...ItemProps}
-                onDelete={() => onDelete(id) }/>
+                onDelete={() => onDelete(id) }
+                />
         )
     });
 
