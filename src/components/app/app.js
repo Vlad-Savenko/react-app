@@ -48,28 +48,25 @@ class App extends Component {
         })
     }
 
-    onTogleIncrease = (id) => {
-        this.setState(({data}) => {
-            const index = data.findIndex(elem => elem.id === id);
-
-            const old = data[index];
-            const newItem = {...old,increase: !old.increase};
-            const newArr = [...data.slice(0,index),newItem,...data.slice(index + 1)];
-            return {
-                data:newArr
-            }
-        })
-    }
-
-    onTogleRise = (id) => {
-        console.log(`Rice this ${id}`);
+    onTogleProp= (id,prop) => {
+        this.setState(({data}) => ({
+            data: data.map(item => {
+                if(item.id === id) {
+                    return{...item, [prop]:!item[prop]}
+                }
+                return item;
+            }),
+        }))
     }
  
 
     render() {
+        const employers = this.state.data.length;
+        const inceased = this.state.data.filter(item => item.increase).length;
         return  (
             <div className="app">
-                <AppInfo/>
+                <AppInfo employers ={employers}
+                inceased = {inceased}/>
     
                 <div className="search-panel">
                     <SearchPanel/>
@@ -79,8 +76,7 @@ class App extends Component {
                 <EmployersList 
                 data={this.state.data}
                 onDelete={this.deleteItem}
-                onTogleIncrease = {this.onTogleIncrease}
-                onTogleRise = {this.onTogleRise}/>
+                onTogleProp = {this.onTogleProp}/>
                 <EmployersAddForm
                 onAdd={this.addItem}/>
     
