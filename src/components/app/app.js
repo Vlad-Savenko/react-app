@@ -14,8 +14,8 @@ class App extends Component {
         super(props);
         this.state = {
             data:  [
-                {name:"Oleg N.",salary:"800",increase:false,rice:false,id: 1},
-                {name:"Vlad S..",salary:"2000",increase:true,rice:false,id: 2},
+                {name:"Oleg N.",salary:"800",increase:false,rice:true,id: 1},
+                {name:"Vlad S.",salary:"2000",increase:true,rice:false,id: 2},
                 {name:"Anton N.",salary:"400",increase:false,rice:false,id: 3},
             ]
         }
@@ -37,6 +37,7 @@ class App extends Component {
             name,
             salary,
             increase:false,
+            rice:false,
             id: this.maxId++
         }
         this.setState(({data}) => {
@@ -45,6 +46,23 @@ class App extends Component {
                 data:newArr
             }
         })
+    }
+
+    onTogleIncrease = (id) => {
+        this.setState(({data}) => {
+            const index = data.findIndex(elem => elem.id === id);
+
+            const old = data[index];
+            const newItem = {...old,increase: !old.increase};
+            const newArr = [...data.slice(0,index),newItem,...data.slice(index + 1)];
+            return {
+                data:newArr
+            }
+        })
+    }
+
+    onTogleRise = (id) => {
+        console.log(`Rice this ${id}`);
     }
  
 
@@ -60,7 +78,9 @@ class App extends Component {
     
                 <EmployersList 
                 data={this.state.data}
-                onDelete={this.deleteItem}/>
+                onDelete={this.deleteItem}
+                onTogleIncrease = {this.onTogleIncrease}
+                onTogleRise = {this.onTogleRise}/>
                 <EmployersAddForm
                 onAdd={this.addItem}/>
     
