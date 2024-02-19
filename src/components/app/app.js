@@ -42,9 +42,11 @@ class App extends Component {
         }
         this.setState(({data}) => {
             const newArr = [...data,newItem]
+
             return {
                 data:newArr
             }
+
         })
     }
 
