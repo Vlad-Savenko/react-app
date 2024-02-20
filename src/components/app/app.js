@@ -13,77 +13,104 @@ class App extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            data:  [
-                {name:"Oleg N.",salary:"800",increase:false,rice:true,id: 1},
-                {name:"Vlad S.",salary:"2000",increase:true,rice:false,id: 2},
-                {name:"Anton N.",salary:"400",increase:false,rice:false,id: 3},
-            ]
+            data: [
+                {name: 'John C.', salary: 800, increase: false, rise: true, id: 1},
+                {name: 'Alex M.', salary: 3000, increase: true, rise: false, id: 2},
+                {name: 'Carl W.', salary: 5000, increase: false, rise: false, id: 3}
+            ],
+            term: '', 
+            filter: 'rise'
         }
         this.maxId = 4;
     }
 
-
-
     deleteItem = (id) => {
-        this.setState (({data}) => {
+        this.setState(({data}) => {
             return {
                 data: data.filter(item => item.id !== id)
             }
         })
     }
-    addItem = (name,salary) => {
 
+    // Да, пока могут добавляться пустые пользователи. Мы это еще исправим
+    addItem = (name, salary) => {
         const newItem = {
-            name,
+            name, 
             salary,
-            increase:false,
-            rice:false,
+            increase: false,
+            rise: false,
             id: this.maxId++
         }
         this.setState(({data}) => {
-            const newArr = [...data,newItem]
-
+            const newArr = [...data, newItem];
             return {
-                data:newArr
+                data: newArr
             }
+        });
+    }
 
+    onToggleProp = (id, prop) => {
+        this.setState(({data}) => ({
+            data: data.map(item => {
+                if (item.id === id) {
+                    return {...item, [prop]: !item[prop]}
+                }
+                return item;
+            })
+        }))
+    }
+
+    searchEmp = (items, term) => {
+        if (term.length === 0) {
+            return items;
+        }
+
+        return items.filter(item => {
+            return item.name.indexOf(term) > -1
         })
     }
 
-    onTogleProp= (id,prop) => {
-        this.setState(({data}) => ({
-            data: data.map(item => {
-                if(item.id === id) {
-                    return{...item, [prop]:!item[prop]}
-                }
-                return item;
-            }),
-        }))
+    onUpdateSearch = (term) => {
+        this.setState({term});
     }
- 
+
+    filterPost = (items, filter) => {
+        switch (filter) {
+            case 'rise':
+                return items.filter(item => item.rise);
+            case 'moreThen1000':
+                return items.filter(item => item.salary > 1000);
+            default:
+                return items
+        }
+    }
+
+    onFilterSelect = (filter) => {
+        this.setState({filter});
+    }
 
     render() {
+        const {data, term, filter} = this.state;
         const employers = this.state.data.length;
-        const inceased = this.state.data.filter(item => item.increase).length;
-        return  (
+        const increased = this.state.data.filter(item => item.increase).length;
+        const visibleData = this.filterPost(this.searchEmp(data, term), filter);
+
+        return (
             <div className="app">
-                <AppInfo employers ={employers}
-                inceased = {inceased}/>
+                <AppInfo employers={employers} increased={increased}/>
     
                 <div className="search-panel">
-                    <SearchPanel/>
-                    <AppFilter/>
+                    <SearchPanel onUpdateSearch={this.onUpdateSearch}/>
+                    <AppFilter filter={filter} onFilterSelect={this.onFilterSelect}/>
                 </div>
-    
+                
                 <EmployersList 
-                data={this.state.data}
-                onDelete={this.deleteItem}
-                onTogleProp = {this.onTogleProp}/>
-                <EmployersAddForm
-                onAdd={this.addItem}/>
-    
+                    data={visibleData}
+                    onDelete={this.deleteItem}
+                    onToggleProp={this.onToggleProp}/>
+                <EmployersAddForm onAdd={this.addItem}/>
             </div>
-        )
+        );
     }
 }
 
